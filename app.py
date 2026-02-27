@@ -198,13 +198,7 @@ if "code" in query_params and st.session_state.token is None:
 if st.session_state.token is None:
     st.info("Connect your Strava account to get started.")
     auth_url = get_auth_url(client)
-    st.markdown(
-        f'<a href="{auth_url}" target="_self">'
-        f'<button style="background:#fc4c02;color:white;padding:12px 32px;'
-        f'border:none;border-radius:6px;font-size:18px;cursor:pointer;font-weight:bold;">'
-        f'🔗 Connect with Strava</button></a>',
-        unsafe_allow_html=True,
-    )
+    st.link_button("🔗 Connect with Strava", auth_url)
     st.stop()
 
 client.access_token = st.session_state.token["access_token"]
@@ -463,6 +457,7 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
 
