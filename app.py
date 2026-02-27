@@ -113,6 +113,7 @@ def fetch_activities(_client, start_date, end_date):
         lat, lon = None, None
         try:
             latlng = a.start_latlng
+            print(f"DEBUG latlng: {latlng!r}  type: {type(latlng)}")
             if latlng is not None:
                 coords = list(latlng)
                 if len(coords) == 2:
@@ -554,6 +555,7 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
 
