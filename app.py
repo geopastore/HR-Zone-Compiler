@@ -287,6 +287,8 @@ if st.sidebar.button("🔄 Load activities", type="primary"):
 # ============================================================
 
 if st.session_state.df is None:
+    ---
+    st.subheader("Instructions")
     st.info("1️⃣ Set a date range (maximum 200 activities) .")
     st.info("2️⃣Set your defined Heart Rate Zones (use a 5 Zone system).")
     st.info("👈 Press  **Load activities** to begin.")
@@ -484,6 +486,7 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
 
