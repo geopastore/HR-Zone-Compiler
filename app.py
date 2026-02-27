@@ -173,9 +173,34 @@ st.set_page_config(
     page_icon  = "🏃",
     layout     = "wide",
 )
-st.title("🏃❤️ HR Zone compiler by G.Pastore")
-st.subheader("Instructions")
-st.markdown("This app fetches your uploaded activities in a selected date range. It computes the % of time spent in each Heart Rate Zone.")
+st.title("🏃❤️ HR Zone Compiler by G. Pastore")
+
+st.markdown("""
+This app connects to your **Strava account** and analyses your running and trail running activities 
+within a selected date range. It goes beyond what Strava shows you natively by computing the 
+**exact percentage of time you spent in each Heart Rate zone** during every activity — using the 
+raw second-by-second HR stream data.
+
+**What it does:**
+- Fetches all your Run and TrailRun activities in the selected period
+- Retrieves the detailed HR stream for each activity
+- Classifies every second of effort into your personalised HR zones (Z1 → Z5)
+- Shows your average zone distribution across all activities
+- Lets you inspect any single activity with a detailed zone breakdown
+- Exports everything to CSV for further analysis
+
+**⚠️ Please use responsibly**  
+Strava's API is rate-limited to **100 requests every 15 minutes**. Each activity requires one 
+stream request, so avoid loading very long date ranges in quick succession or you may hit the 
+limit and see empty results. If that happens, just wait 15 minutes and try again.
+
+**HR zone boundaries** are fully customisable in the sidebar — set them to match your own 
+physiology (typically derived from your max HR or a lactate test).
+
+---
+Built by **Guido Pastore** · [Personal webpage](https://geopastore.github.io/) · Powered by 
+[Strava API](https://developers.strava.com/) & [Streamlit](https://streamlit.io)
+""")
 
 # ============================================================
 # AUTHENTICATION
@@ -262,7 +287,9 @@ if st.sidebar.button("🔄 Load activities", type="primary"):
 # ============================================================
 
 if st.session_state.df is None:
-    st.info("👈 Set a date range and press **Load activities** to begin.")
+    st.info("1️⃣ Set a date range (maximum 200 activities) .")
+    st.info("2️⃣Set your defined Heart Rate Zones (use a 5 Zone system).")
+    st.info("👈 Press  **Load activities** to begin.")
     st.stop()
 
 df = st.session_state.df
@@ -457,6 +484,7 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
 
