@@ -23,7 +23,7 @@ except ImportError:
 
 CLIENT_ID     = os.environ.get("STRAVA_CLIENT_ID") or st.secrets.get("STRAVA_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET") or st.secrets.get("STRAVA_CLIENT_SECRET")
-REDIRECT_URI = "https://hr-zone-compiler-gp.streamlit.app"
+REDIRECT_URI = "https://hr-zone-compiler-gp.streamlit.app/"
 
 
 ZONE_COLORS = {
@@ -463,5 +463,6 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
