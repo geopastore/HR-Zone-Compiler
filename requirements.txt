@@ -3,3 +3,4 @@ stravalib
 pandas
 plotly
 python-dotenv
+pydeck
