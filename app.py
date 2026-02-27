@@ -110,14 +110,14 @@ def fetch_activities(_client, start_date, end_date):
         secs = to_seconds(a.moving_time)
         dist = to_float(a.distance)
 
-       lat, lon = None, None
-       try:
-           latlng = a.start_latlng
-           if latlng is not None:
-               coords = list(latlng)
-               if len(coords) == 2:
-                   lat = float(coords[0])
-                   lon = float(coords[1])
+        lat, lon = None, None
+        try:
+            latlng = a.start_latlng
+            if latlng is not None:
+                coords = list(latlng)
+                if len(coords) == 2:
+                    lat = float(coords[0])
+                    lon = float(coords[1])
         except Exception:
             pass
 
@@ -554,6 +554,7 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
 
