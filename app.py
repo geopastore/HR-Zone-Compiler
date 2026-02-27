@@ -110,6 +110,11 @@ def fetch_activities(_client, start_date, end_date):
         secs = to_seconds(a.moving_time)
         dist = to_float(a.distance)
 
+        lat, lon = None, None
+        if a.start_latlng and len(a.start_latlng) == 2:
+            lat = float(a.start_latlng[0])
+            lon = float(a.start_latlng[1])
+
         rows.append({
             "id"          : str(a.id),
             "date"        : a.start_date_local.strftime("%Y-%m-%d %H:%M") if a.start_date_local else None,
@@ -118,6 +123,8 @@ def fetch_activities(_client, start_date, end_date):
             "duration_min": round(secs / 60, 1)   if secs else None,
             "elevation_m" : to_float(a.total_elevation_gain),
             "avg_hr"      : to_float(a.average_heartrate),
+            "lat"         : lat,
+            "lon"         : lon,
         })
 
     return pd.DataFrame(rows)
@@ -346,6 +353,62 @@ display_cols = [c for c in display_cols if c in full_df.columns]
 st.dataframe(full_df[display_cols], use_container_width=True, hide_index=True)
 st.divider()
 
+# ============================================================
+# 1b. ACTIVITY MAP
+# ============================================================
+
+st.subheader("🗺️ Activity starting points")
+
+map_df = full_df[["date", "sport_type", "distance_km", "lat", "lon"]].dropna(subset=["lat", "lon"])
+
+if map_df.empty:
+    st.info("No location data available for these activities.")
+else:
+    import pydeck as pdk
+
+    # Color by sport type: orange for Run, green for TrailRun
+    def sport_color(sport):
+        if sport == "TrailRun":
+            return [40, 180, 100, 200]   # green
+        return [252, 76, 2, 200]          # Strava orange
+
+    map_df = map_df.copy()
+    map_df["color"] = map_df["sport_type"].apply(sport_color)
+    map_df["tooltip"] = (
+        map_df["date"] + " | " +
+        map_df["distance_km"].astype(str) + " km | " +
+        map_df["sport_type"]
+    )
+
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        data          = map_df,
+        get_position  = ["lon", "lat"],
+        get_color     = "color",
+        get_radius    = 400,
+        pickable      = True,
+        radius_min_pixels = 5,
+        radius_max_pixels = 20,
+    )
+
+    view = pdk.ViewState(
+        latitude  = map_df["lat"].mean(),
+        longitude = map_df["lon"].mean(),
+        zoom      = 9,
+        pitch     = 0,
+    )
+
+    st.pydeck_chart(
+        pdk.Deck(
+            layers           = [layer],
+            initial_view_state = view,
+            tooltip          = {"text": "{tooltip}"},
+            map_style        = "mapbox://styles/mapbox/light-v10",
+        )
+    )
+    st.caption("🟠 Run   🟢 TrailRun  —  click a dot to see activity details")
+
+st.divider()
 
 # ============================================================
 # 2. WEEKLY DISTANCE
@@ -485,6 +548,7 @@ st.download_button(
     file_name = f"strava_runs_{start_date}_{end_date}.csv",
     mime      = "text/csv",
 )
+
 
 
 
